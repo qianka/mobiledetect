@@ -1,0 +1,7 @@
+====================
+Python Mobile Detect
+====================
+
+Detects mobile phones and tables from useragent string and http headers.
+
+Big thanks to Mobile-Detect from serbanghita.
