@@ -6,7 +6,8 @@ Thanks to:
     https://github.com/serbanghita/Mobile-Detect/blob/master/Mobile_Detect.php
 """
 
-from .rules import ALL_RULES, DEVICE_PHONES, DEVICE_TABLETS, OPERATINGSYSTEMS, MOBILE_USER_AGENTS, UTILITIES, PROPERTIES
+from hashlib import sha1
+from .rules import ALL_RULES, DEVICE_PHONES, DEVICE_TABLETS, OPERATINGSYSTEMS, MOBILE_USER_AGENTS, UTILITIES, PROPERTIES, MOBILE_HTTP_HEADERS
 
 
 class MobileDetect(object):
@@ -25,7 +26,7 @@ class MobileDetect(object):
             self.useragent = ""
 
         if self.request is not None:
-            self.headers = dict((k, v) for k, v in request.META.iteritems() if k.startswith("HTTP_"))
+            self.headers = dict((k, v) for k, v in request.META.iteritems() if k in MOBILE_HTTP_HEADERS)
             if 'HTTP_X_OPERAMINI_PHONE_UA' in request.META:
                 self.useragent = "%s %s" % (self.useragent, request.META['HTTP_X_OPERAMINI_PHONE_UA'])
 
@@ -48,6 +49,15 @@ class MobileDetect(object):
             pass
         return False
 
+    @property
+    def device_hash(self):
+        if not hasattr(self, '_device_hash'):
+            hsh = sha1(self.useragent)
+            for k, v in self.headers.iteritems():
+                hsh.update("%s:%s" % (k, v))
+            self._device_hash = hsh.hexdigest()
+        return self._device_hash
+
     def mobile_by_headers(self):
         """
         Check the HTTP Headers for signs of mobile devices.
@@ -55,31 +65,14 @@ class MobileDetect(object):
         This is the fastest mobile check but probably also the most unreliable.
         """
 
+        if self.headers:
+            return True
+
         try:
             if self.headers['HTTP_ACCEPT'] in ('application/x-obml2d', 'application/vnd.rim.html', 'text/vnd.wap.wml', 'application/vnd.wap.xhtml+xml'):
                 return True
         except KeyError:
             pass
-
-        mobile_headers = (
-            'HTTP_X_WAP_PROFILE',  # @todo: validate
-            'HTTP_X_WAP_CLIENTID',
-            'HTTP_WAP_CONNECTION'
-            'HTTP_PROFILE',
-            'HTTP_X_OPERAMINI_PHONE_UA',  # Reported by Nokia devices (eg. C3)
-            'HTTP_X_NOKIA_IPADDRESS',
-            'HTTP_X_NOKIA_GATEWAY_ID',
-            'HTTP_X_ORANGE_ID',
-            'HTTP_X_VODAFONE_3GPDPCONTEXT',
-            'HTTP_X_HUAWEI_USERID',
-            'HTTP_UA_OS',  # Reported by Windows Smartphones.
-            'HTTP_X_MOBILE_GATEWAY',  # Reported by Verizon, Vodafone proxy system.
-            'HTTP_X_ATT_DEVICEID',  # Seend this on HTC Sensation. @ref: SensationXE_Beats_Z715e
-            # HTTP_X_NETWORK_TYPE = WIFI
-        )
-        for name in mobile_headers:
-            if name in self.headers:
-                return True
 
         try:
             if self.headers['HTTP_UA_CPU'] in ('ARM', ):

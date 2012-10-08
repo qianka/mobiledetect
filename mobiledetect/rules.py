@@ -184,3 +184,21 @@ ALL_RULES.update(MOBILE_USER_AGENTS)
 ALL_RULES.update(UTILITIES)
 ALL_RULES.update(PROPERTIES)
 
+MOBILE_HTTP_HEADERS = (
+    'HTTP_ACCEPT',
+    'HTTP_X_WAP_PROFILE',  # @todo: validate
+    'HTTP_X_WAP_CLIENTID',
+    'HTTP_WAP_CONNECTION'
+    'HTTP_PROFILE',
+    'HTTP_X_OPERAMINI_PHONE_UA',  # Reported by Nokia devices (eg. C3)
+    'HTTP_X_NOKIA_IPADDRESS',
+    'HTTP_X_NOKIA_GATEWAY_ID',
+    'HTTP_X_ORANGE_ID',
+    'HTTP_X_VODAFONE_3GPDPCONTEXT',
+    'HTTP_X_HUAWEI_USERID',
+    'HTTP_UA_OS',  # Reported by Windows Smartphones.
+    'HTTP_X_MOBILE_GATEWAY',  # Reported by Verizon, Vodafone proxy system.
+    'HTTP_X_ATT_DEVICEID',  # Seend this on HTC Sensation. @ref: SensationXE_Beats_Z715e
+    # HTTP_X_NETWORK_TYPE = WIFI
+    'HTTP_UA_CPU',
+)
