@@ -169,6 +169,12 @@ PROPERTIES = {
     'webOS': re.compile('(webOS|hpwOS)/([\w._]+)'),
 }
 
+UA_RULES = {}
+UA_RULES.update(DEVICE_PHONES)
+UA_RULES.update(DEVICE_TABLETS)
+UA_RULES.update(OPERATINGSYSTEMS)
+UA_RULES.update(MOBILE_USER_AGENTS)
+UA_RULES.update(UTILITIES)
 
 ALL_RULES = {}
 ALL_RULES.update(DEVICE_PHONES)
