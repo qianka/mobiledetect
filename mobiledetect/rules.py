@@ -185,7 +185,6 @@ ALL_RULES.update(UTILITIES)
 ALL_RULES.update(PROPERTIES)
 
 MOBILE_HTTP_HEADERS = (
-    'HTTP_ACCEPT',
     'HTTP_X_WAP_PROFILE',  # @todo: validate
     'HTTP_X_WAP_CLIENTID',
     'HTTP_WAP_CONNECTION'
@@ -200,5 +199,4 @@ MOBILE_HTTP_HEADERS = (
     'HTTP_X_MOBILE_GATEWAY',  # Reported by Verizon, Vodafone proxy system.
     'HTTP_X_ATT_DEVICEID',  # Seend this on HTC Sensation. @ref: SensationXE_Beats_Z715e
     # HTTP_X_NETWORK_TYPE = WIFI
-    'HTTP_UA_CPU',
 )

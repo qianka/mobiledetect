@@ -1,0 +1,4 @@
+
+- fix django specific use of request object
+
+- implement browser grades

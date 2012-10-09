@@ -27,6 +27,18 @@ class MobileDetect(object):
 
         if self.request is not None:
             self.headers = dict((k, v) for k, v in request.META.iteritems() if k in MOBILE_HTTP_HEADERS)
+            try:
+                if request.META['HTTP_ACCEPT'] in ('application/x-obml2d', 'application/vnd.rim.html', 'text/vnd.wap.wml', 'application/vnd.wap.xhtml+xml'):
+                    self.headers['HTTP_ACCEPT'] = request.META['HTTP_ACCEPT']
+            except KeyError:
+                pass
+
+            try:
+                if request.META['HTTP_UA_CPU'] in ('ARM', ):
+                    self.headers['HTTP_UA_CPU'] = request.META['HTTP_UA_CPU']
+            except KeyError:
+                pass
+
             if 'HTTP_X_OPERAMINI_PHONE_UA' in request.META:
                 self.useragent = "%s %s" % (self.useragent, request.META['HTTP_X_OPERAMINI_PHONE_UA'])
 
@@ -67,18 +79,6 @@ class MobileDetect(object):
 
         if self.headers:
             return True
-
-        try:
-            if self.headers['HTTP_ACCEPT'] in ('application/x-obml2d', 'application/vnd.rim.html', 'text/vnd.wap.wml', 'application/vnd.wap.xhtml+xml'):
-                return True
-        except KeyError:
-            pass
-
-        try:
-            if self.headers['HTTP_UA_CPU'] in ('ARM', ):
-                return True
-        except KeyError:
-            pass
 
         return False
 
