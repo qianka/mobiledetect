@@ -86,27 +86,47 @@ class MobileDetect(object):
         return self.is_phone() or self.is_tablet() or self.is_mobile_os() or self.is_mobile_ua()
 
     def is_phone(self):
+        if self.detect_phone():
+            return True
+        return False
+
+    def is_tablet(self):
+        if self.detect_tablet():
+            return True
+        return False
+
+    def is_mobile_os(self):
+        if self.detect_mobile_os():
+            return True
+        return False
+
+    def is_mobile_ua(self):
+        if self.detect_mobile_ua():
+            return True
+        return False
+
+    def detect_phone(self):
         """ Is Phone Device """
         for name, rule in DEVICE_PHONES.iteritems():
             if rule.search(self.useragent):
                 return name
         return False
 
-    def is_tablet(self):
+    def detect_tablet(self):
         """ Is Tabled Device """
         for name, rule in DEVICE_TABLETS.iteritems():
             if rule.search(self.useragent):
                 return name
         return False
 
-    def is_mobile_os(self):
+    def detect_mobile_os(self):
         """ Is Mobile OperatingSystem """
         for name, rule in OPERATINGSYSTEMS.iteritems():
             if rule.search(self.useragent):
                 return name
         return False
 
-    def is_mobile_ua(self):
+    def detect_mobile_ua(self):
         """ Is Mobile User-Agent """
         for name, rule in MOBILE_USER_AGENTS.iteritems():
             if rule.search(self.useragent):
