@@ -85,10 +85,12 @@ class MobileDetect(object):
     def mobile_by_useragent(self):
         return self.is_phone() or self.is_tablet() or self.is_mobile_os() or self.is_mobile_ua()
 
-    def is_crawler(self):
+    def is_bot(self):
         if self.detect_bot():
             return True
         return False
+
+    is_crawler = is_bot
 
     def is_phone(self):
         if self.detect_phone():
@@ -115,6 +117,8 @@ class MobileDetect(object):
             if rule.search(self.useragent):
                 return name
         return False
+
+    detect_crawler = detect_bot
 
     def detect_phone(self):
         """ Is Phone Device """
