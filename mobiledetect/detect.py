@@ -7,7 +7,7 @@ Thanks to:
 """
 
 from hashlib import sha1
-from .rules import ALL_RULES, DEVICE_PHONES, DEVICE_TABLETS, OPERATINGSYSTEMS, MOBILE_USER_AGENTS, UTILITIES, PROPERTIES, MOBILE_HTTP_HEADERS
+from .rules import ALL_RULES, DEVICE_PHONES, DEVICE_TABLETS, OPERATINGSYSTEMS, MOBILE_USER_AGENTS, UTILITIES, BOTS, PROPERTIES, MOBILE_HTTP_HEADERS
 
 
 class MobileDetect(object):
@@ -85,6 +85,11 @@ class MobileDetect(object):
     def mobile_by_useragent(self):
         return self.is_phone() or self.is_tablet() or self.is_mobile_os() or self.is_mobile_ua()
 
+    def is_crawler(self):
+        if self.detect_bot():
+            return True
+        return False
+
     def is_phone(self):
         if self.detect_phone():
             return True
@@ -103,6 +108,12 @@ class MobileDetect(object):
     def is_mobile_ua(self):
         if self.detect_mobile_ua():
             return True
+        return False
+
+    def detect_bot(self):
+        for name, rule in BOTS.iteritems():
+            if rule.search(self.useragent):
+                return name
         return False
 
     def detect_phone(self):

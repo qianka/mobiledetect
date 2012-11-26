@@ -102,6 +102,9 @@ MOBILE_USER_AGENTS = {
 
 UTILITIES = {
     'WebKit': re.compile('(webkit)[ /]([\w.]+)'),
+}
+
+BOTS = {
     'Bot': re.compile('Googlebot|DoCoMo|YandexBot|bingbot|ia_archiver|AhrefsBot|Ezooms|GSLFbot|WBSearchBot|Twitterbot|TweetmemeBot|Twikle|PaperLiBot|Wotbox|UnwindFetchor|facebookexternalhit'),
     'MobileBot': re.compile('Googlebot-Mobile|DoCoMo|YahooSeeker/M1A1-R2D2'),
 }
