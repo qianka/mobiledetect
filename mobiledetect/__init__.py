@@ -6,7 +6,7 @@ Thanks to:
     https://github.com/serbanghita/Mobile-Detect/blob/master/Mobile_Detect.php
 """
 
-__version__ = "1.0.6"
+__version__ = "1.0.7"
 
 from .detect import MobileDetect  # NOQA
 
