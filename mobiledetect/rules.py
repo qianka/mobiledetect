@@ -60,7 +60,7 @@ OPERATINGSYSTEMS = {
     # http://wifeng.cn/?r=blog&a=view&id=106
     # http://nicksnettravels.builttoroam.com/post/2011/01/10/Bogus-Windows-Phone-7-User-Agent-String.aspx
     'WindowsPhoneOS': re.compile('Windows Phone OS|XBLWP7|ZuneWP7'),
-    'iOS': re.compile('iphone|ipod|ipad'),
+    'iOS': re.compile('iphone|ipod|ipad', re.I),
     #'FlashLiteOS': re.compile(''),
     # http://en.wikipedia.org/wiki/MeeGo
     # @todo: research MeeGo in UAs
