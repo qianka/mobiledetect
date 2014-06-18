@@ -1,5 +1,5 @@
 """
-WSGI and Django Middlware for mobiledetect
+WSGI and Django Middleware for mobiledetect
 """
 
 

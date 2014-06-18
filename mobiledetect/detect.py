@@ -6,8 +6,60 @@ Thanks to:
     https://github.com/serbanghita/Mobile-Detect/blob/master/Mobile_Detect.php
 """
 
+import os
+import re
+import json
 from hashlib import sha1
-from .rules import ALL_RULES, DEVICE_PHONES, DEVICE_TABLETS, OPERATINGSYSTEMS, MOBILE_USER_AGENTS, UTILITIES, BOTS, PROPERTIES, MOBILE_HTTP_HEADERS
+
+OPERATINGSYSTEMS = {}
+DEVICE_PHONES = {}
+DEVICE_TABLETS = {}
+DEVICE_BROWSERS = {}
+ALL_RULES = {}
+MOBILE_HTTP_HEADERS = {}
+UA_HTTP_HEADERS = {}
+
+class MobileDetectRuleFileError(Exception):
+    pass
+
+class MobileDetectError(Exception):
+    pass
+
+
+def load_rules(filename=None):
+    global OPERATINGSYSTEMS
+    global DEVICE_PHONES
+    global DEVICE_TABLETS
+    global DEVICE_BROWSERS
+    global ALL_RULES
+    global MOBILE_HTTP_HEADERS
+    global UA_HTTP_HEADERS
+
+    if filename is None:
+        filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), "Mobile_Detect.json")
+    rules = json.load(open(filename))
+    if not "version" in rules:
+        raise MobileDetectRuleFileError("version not found in rule file: %s" % filename)
+    if not "headerMatch" in rules:
+        raise MobileDetectRuleFileError("section 'headerMatch' not found in rule file: %s" % filename)
+    if not "uaHttpHeaders" in rules:
+        raise MobileDetectRuleFileError("section 'uaHttpHeaders' not found in rule file: %s" % filename)
+    if not "uaMatch" in rules:
+        raise MobileDetectRuleFileError("section 'uaMatch' not found in rule file: %s" % filename)
+
+    MOBILE_HTTP_HEADERS = dict((http_header, matches) for http_header, matches in rules["headerMatch"].iteritems())
+    UA_HTTP_HEADERS = rules['uaHttpHeaders']
+    OPERATINGSYSTEMS = dict((name, re.compile(match)) for name, match in rules['uaMatch']['os'].iteritems())
+    DEVICE_PHONES = dict((name, re.compile(match)) for name, match in rules['uaMatch']['phones'].iteritems())
+    DEVICE_TABLETS = dict((name, re.compile(match)) for name, match in rules['uaMatch']['tablets'].iteritems())
+    DEVICE_BROWSERS = dict((name, re.compile(match)) for name, match in rules['uaMatch']['browsers'].iteritems())
+    ALL_RULES = {}
+    ALL_RULES.update(OPERATINGSYSTEMS)
+    ALL_RULES.update(DEVICE_PHONES)
+    ALL_RULES.update(DEVICE_TABLETS)
+    ALL_RULES.update(DEVICE_BROWSERS)
+
+load_rules()
 
 
 class MobileDetect(object):
@@ -26,21 +78,23 @@ class MobileDetect(object):
             self.useragent = ""
 
         if self.request is not None:
-            self.headers = dict((k, v) for k, v in request.META.iteritems() if k in MOBILE_HTTP_HEADERS)
-            try:
-                if request.META['HTTP_ACCEPT'] in ('application/x-obml2d', 'application/vnd.rim.html', 'text/vnd.wap.wml', 'application/vnd.wap.xhtml+xml'):
-                    self.headers['HTTP_ACCEPT'] = request.META['HTTP_ACCEPT']
-            except KeyError:
-                pass
+            for http_header, matches in MOBILE_HTTP_HEADERS.iteritems():
+                if not http_header in request.META:
+                    continue
 
-            try:
-                if request.META['HTTP_UA_CPU'] in ('ARM', ):
-                    self.headers['HTTP_UA_CPU'] = request.META['HTTP_UA_CPU']
-            except KeyError:
-                pass
+                header_value = request.META['http_header']
+                if matches and isinstance(matches, dict) and 'matches' in matches:
+                    if not header_value in matches['matches']:
+                        continue
+
+                self.headers[http_header] = header_value
 
             if 'HTTP_X_OPERAMINI_PHONE_UA' in request.META:
                 self.useragent = "%s %s" % (self.useragent, request.META['HTTP_X_OPERAMINI_PHONE_UA'])
+
+            for http_header in UA_HTTP_HEADERS:
+                if http_header in request.META:
+                    self.headers[http_header] = None
 
         if headers is not None:
             self.headers.update(headers)
@@ -85,13 +139,6 @@ class MobileDetect(object):
     def mobile_by_useragent(self):
         return self.is_phone() or self.is_tablet() or self.is_mobile_os() or self.is_mobile_ua()
 
-    def is_bot(self):
-        if self.detect_bot():
-            return True
-        return False
-
-    is_crawler = is_bot
-
     def is_phone(self):
         if self.detect_phone():
             return True
@@ -111,14 +158,6 @@ class MobileDetect(object):
         if self.detect_mobile_ua():
             return True
         return False
-
-    def detect_bot(self):
-        for name, rule in BOTS.iteritems():
-            if rule.search(self.useragent):
-                return name
-        return False
-
-    detect_crawler = detect_bot
 
     def detect_phone(self):
         """ Is Phone Device """
@@ -143,7 +182,7 @@ class MobileDetect(object):
 
     def detect_mobile_ua(self):
         """ Is Mobile User-Agent """
-        for name, rule in MOBILE_USER_AGENTS.iteritems():
+        for name, rule in DEVICE_BROWSERS.iteritems():
             if rule.search(self.useragent):
                 return name
         return False
@@ -164,9 +203,5 @@ class MobileDetect(object):
         """
         Return the browser 'grade'
         """
-        is_mobile = self.is_mobile()
-
-        # TODO
-
-        return 'C'
+        raise NotImplementedError()
 

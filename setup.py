@@ -17,6 +17,7 @@ setup(
     keywords = "mobile tabled detect browser",
     url = "https://bitbucket.org/trbs/pymobiledetect/overview",
     packages=['mobiledetect', 'mobiledetect.test'],
+    package_data={'mobiledetect': ['Mobile_Detect.json']},
     test_suite='nose.collector',
     long_description=read('README'),
     classifiers=[
