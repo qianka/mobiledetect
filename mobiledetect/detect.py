@@ -49,10 +49,10 @@ def load_rules(filename=None):
 
     MOBILE_HTTP_HEADERS = dict((http_header, matches) for http_header, matches in rules["headerMatch"].iteritems())
     UA_HTTP_HEADERS = rules['uaHttpHeaders']
-    OPERATINGSYSTEMS = dict((name, re.compile(match)) for name, match in rules['uaMatch']['os'].iteritems())
-    DEVICE_PHONES = dict((name, re.compile(match)) for name, match in rules['uaMatch']['phones'].iteritems())
-    DEVICE_TABLETS = dict((name, re.compile(match)) for name, match in rules['uaMatch']['tablets'].iteritems())
-    DEVICE_BROWSERS = dict((name, re.compile(match)) for name, match in rules['uaMatch']['browsers'].iteritems())
+    OPERATINGSYSTEMS = dict((name, re.compile(match, re.IGNORECASE|re.DOTALL)) for name, match in rules['uaMatch']['os'].iteritems())
+    DEVICE_PHONES = dict((name, re.compile(match, re.IGNORECASE|re.DOTALL)) for name, match in rules['uaMatch']['phones'].iteritems())
+    DEVICE_TABLETS = dict((name, re.compile(match, re.IGNORECASE|re.DOTALL)) for name, match in rules['uaMatch']['tablets'].iteritems())
+    DEVICE_BROWSERS = dict((name, re.compile(match, re.IGNORECASE|re.DOTALL)) for name, match in rules['uaMatch']['browsers'].iteritems())
     ALL_RULES = {}
     ALL_RULES.update(OPERATINGSYSTEMS)
     ALL_RULES.update(DEVICE_PHONES)
