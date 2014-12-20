@@ -82,7 +82,7 @@ class MobileDetect(object):
                 if not http_header in request.META:
                     continue
 
-                header_value = request.META['http_header']
+                header_value = request.META[http_header]
                 if matches and isinstance(matches, dict) and 'matches' in matches:
                     if not header_value in matches['matches']:
                         continue
