@@ -68,16 +68,13 @@ class MobileDetect(object):
         self.useragent = useragent
         self.headers = {}
 
-        if self.useragent is None:
-            self.useragent = request.META.get('HTTP_USER_AGENT')
-
-        if self.useragent is None:
-            self.useragent = request.META.get('HTTP_X_DEVICE_USER_AGENT')
-
-        if self.useragent is None:
-            self.useragent = ""
-
         if self.request is not None:
+            if self.useragent is None:
+                for http_header in UA_HTTP_HEADERS:
+                    if http_header in request.META:
+                        self.useragent = request.META[http_header]
+                        break
+
             for http_header, matches in MOBILE_HTTP_HEADERS.iteritems():
                 if not http_header in request.META:
                     continue
@@ -92,12 +89,11 @@ class MobileDetect(object):
             if 'HTTP_X_OPERAMINI_PHONE_UA' in request.META:
                 self.useragent = "%s %s" % (self.useragent, request.META['HTTP_X_OPERAMINI_PHONE_UA'])
 
-            for http_header in UA_HTTP_HEADERS:
-                if http_header in request.META:
-                    self.headers[http_header] = None
-
         if headers is not None:
             self.headers.update(headers)
+
+        if self.useragent is None:
+            self.useragent = ""
 
     def __getitem__(self, key):
         try:
