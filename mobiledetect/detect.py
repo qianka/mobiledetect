@@ -5,6 +5,7 @@ Mobile Detect - Python detection mobile phone and tablet devices
 Thanks to:
     https://github.com/serbanghita/Mobile-Detect/blob/master/Mobile_Detect.php
 """
+from builtins import object
 
 import os
 import re
@@ -47,12 +48,12 @@ def load_rules(filename=None):
     if not "uaMatch" in rules:
         raise MobileDetectRuleFileError("section 'uaMatch' not found in rule file: %s" % filename)
 
-    MOBILE_HTTP_HEADERS = dict((http_header, matches) for http_header, matches in rules["headerMatch"].iteritems())
+    MOBILE_HTTP_HEADERS = dict((http_header, matches) for http_header, matches in rules["headerMatch"].items())
     UA_HTTP_HEADERS = rules['uaHttpHeaders']
-    OPERATINGSYSTEMS = dict((name, re.compile(match, re.IGNORECASE|re.DOTALL)) for name, match in rules['uaMatch']['os'].iteritems())
-    DEVICE_PHONES = dict((name, re.compile(match, re.IGNORECASE|re.DOTALL)) for name, match in rules['uaMatch']['phones'].iteritems())
-    DEVICE_TABLETS = dict((name, re.compile(match, re.IGNORECASE|re.DOTALL)) for name, match in rules['uaMatch']['tablets'].iteritems())
-    DEVICE_BROWSERS = dict((name, re.compile(match, re.IGNORECASE|re.DOTALL)) for name, match in rules['uaMatch']['browsers'].iteritems())
+    OPERATINGSYSTEMS = dict((name, re.compile(match, re.IGNORECASE|re.DOTALL)) for name, match in rules['uaMatch']['os'].items())
+    DEVICE_PHONES = dict((name, re.compile(match, re.IGNORECASE|re.DOTALL)) for name, match in rules['uaMatch']['phones'].items())
+    DEVICE_TABLETS = dict((name, re.compile(match, re.IGNORECASE|re.DOTALL)) for name, match in rules['uaMatch']['tablets'].items())
+    DEVICE_BROWSERS = dict((name, re.compile(match, re.IGNORECASE|re.DOTALL)) for name, match in rules['uaMatch']['browsers'].items())
     ALL_RULES = {}
     ALL_RULES.update(OPERATINGSYSTEMS)
     ALL_RULES.update(DEVICE_PHONES)
@@ -75,7 +76,7 @@ class MobileDetect(object):
                         self.useragent = request.META[http_header]
                         break
 
-            for http_header, matches in MOBILE_HTTP_HEADERS.iteritems():
+            for http_header, matches in MOBILE_HTTP_HEADERS.items():
                 if not http_header in request.META:
                     continue
 
@@ -115,7 +116,7 @@ class MobileDetect(object):
     def device_hash(self):
         if not hasattr(self, '_device_hash'):
             hsh = sha1(self.useragent)
-            for k, v in self.headers.iteritems():
+            for k, v in self.headers.items():
                 hsh.update("%s:%s" % (k, v))
             self._device_hash = hsh.hexdigest()
         return self._device_hash
@@ -157,28 +158,28 @@ class MobileDetect(object):
 
     def detect_phone(self):
         """ Is Phone Device """
-        for name, rule in DEVICE_PHONES.iteritems():
+        for name, rule in DEVICE_PHONES.items():
             if rule.search(self.useragent):
                 return name
         return False
 
     def detect_tablet(self):
         """ Is Tabled Device """
-        for name, rule in DEVICE_TABLETS.iteritems():
+        for name, rule in DEVICE_TABLETS.items():
             if rule.search(self.useragent):
                 return name
         return False
 
     def detect_mobile_os(self):
         """ Is Mobile OperatingSystem """
-        for name, rule in OPERATINGSYSTEMS.iteritems():
+        for name, rule in OPERATINGSYSTEMS.items():
             if rule.search(self.useragent):
                 return name
         return False
 
     def detect_mobile_ua(self):
         """ Is Mobile User-Agent """
-        for name, rule in DEVICE_BROWSERS.iteritems():
+        for name, rule in DEVICE_BROWSERS.items():
             if rule.search(self.useragent):
                 return name
         return False

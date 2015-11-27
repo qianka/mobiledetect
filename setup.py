@@ -15,10 +15,11 @@ setup(
     description = "Detect mobile and tablet browsers",
     license = "AGPL",
     keywords = "mobile tabled detect browser",
-    url = "https://bitbucket.org/trbs/pymobiledetect/overview",
+    url = "https://github.com/qianka/mobiledetec",
     packages=['mobiledetect', 'mobiledetect.test'],
     package_data={'mobiledetect': ['Mobile_Detect.json'], 'mobiledetect.test': ['test_user_agents.json']},
     test_suite='nose.collector',
+    install_requires=['future'],
     long_description=read('README'),
     classifiers=[
         "Development Status :: 5 - Production/Stable",

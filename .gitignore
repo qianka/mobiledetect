@@ -1,0 +1,6 @@
+*.py[co]
+pymobiledetect.egg-info/
+build/
+dist/
+__pycache__/
+
